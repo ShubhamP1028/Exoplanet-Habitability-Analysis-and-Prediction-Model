@@ -64,15 +64,21 @@ Each flag contributes 1 point to the `habitability_score`.
   - Classification Report
   - PCA Visualization
 
+- Classes:
+  - Candidate : These are objects that exhibit signals suggesting the presence of an exoplanet (such as transit events), but they have not yet been fully confirmed through additional observations or rigorous statistical validation.
+  - Confirmed : These exoplanet candidates have been validated as actual exoplanets through one or more methods (e.g., follow-up observations, radial velocity measurements, or statistical confirmation).
+  - False Positive : These signals initially appeared to be indicative of exoplanets but were later determined to have other origins (for example, stellar variability, instrumental noise, or eclipsing binary systems).
+  - Not dispositioned : These are objects for which a clear classification (candidate, confirmed, or false positive) has not been made yet. They might still be under review, or the data could be inconclusive.
+
 ---
 
 ## Classification Report
-                     precision    recall  f1-score
-
-        CANDIDATE       0.35      0.19      0.25
-        CONFIRMED       0.75      0.87      0.81
-   FALSE POSITIVE       0.39      0.19      0.26
-NOT DISPOSITIONED       0.70      0.68      0.69
+ |                   | precision |  recall | f1-score| 
+ |---------------------------------------------------|
+ |       CANDIDATE   |    0.35   |   0.19  |   0.25  |
+ |       CONFIRMED   |    0.75   |   0.87  |   0.81  |
+ |  FALSE POSITIVE   |    0.39   |   0.19  |   0.26  |
+ | NOT DISPOSITIONED |    0.70   |   0.68  |   0.69  |
 
 
 ## 📊 Visualisation
