@@ -64,11 +64,14 @@ Each flag contributes 1 point to the `habitability_score`.
   - Classification Report
   - PCA Visualization
 
-- Classes:
-  - Candidate : These are objects that exhibit signals suggesting the presence of an exoplanet (such as transit events), but they have not yet been fully confirmed through additional observations or rigorous statistical validation.
-  - Confirmed : These exoplanet candidates have been validated as actual exoplanets through one or more methods (e.g., follow-up observations, radial velocity measurements, or statistical confirmation).
-  - False Positive : These signals initially appeared to be indicative of exoplanets but were later determined to have other origins (for example, stellar variability, instrumental noise, or eclipsing binary systems).
-  - Not dispositioned : These are objects for which a clear classification (candidate, confirmed, or false positive) has not been made yet. They might still be under review, or the data could be inconclusive.
+## 🧬 KOI Disposition Classes Explained
+CANDIDATE: Probable planet, under review
+
+CONFIRMED: Verified exoplanet
+
+FALSE POSITIVE: Mistaken signal (e.g., stellar noise)
+
+NOT DISPOSITIONED: Unclassified or unreviewed
 
 ---
 
@@ -93,4 +96,53 @@ Each flag contributes 1 point to the `habitability_score`.
   ![Screenshot 2025-04-15 104834](https://github.com/user-attachments/assets/09ae4c4a-84d3-4a89-8dd5-403d0e269eb2)
 
 - PCA plot for numeric feature space
+
+
+---
+
+## 🛠️ Tech Stack
+Language: Python 3.x
+
+Libraries:
+
+Pandas, NumPy, Matplotlib, Seaborn
+
+Scikit-learn (modeling + PCA)
+
+---
+ 
+## 📁 Project Structure
+
+📦 exoplanet-habitability
+ ┣ 📄 KeplerExoRaw.csv           # Raw data
+ 
+ ┣ 📄 cleankepler.csv            # Cleaned dataset
+ 
+ ┣ 📄 data.csv                   # Feature-engineered dataset
+ 
+ ┣ 📄 featureEngineer.py         # Feature engineering script
+ 
+ ┣ 📄 model_train.py             # ML model training & evaluatio
+ 
+ ┣ 📄 README.md
+ 
+---
+
+## 📌 Future Enhancements
+Hyperparameter tuning for model
+
+SHAP or feature importance analysis
+
+Deployment via Docker or Streamlit Cloud
+
+Integration with real-time exoplanet APIs
+
+---
+
+## 🙏 Acknowledgments
+NASA Exoplanet Archive
+
+Kepler Mission
+
+---
 
