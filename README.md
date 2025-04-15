@@ -73,12 +73,13 @@ Each flag contributes 1 point to the `habitability_score`.
 ---
 
 ## Classification Report
- |      Classes      | precision |  recall | f1-score| 
- |---------------------------------------------------|
- |       CANDIDATE   |    0.35   |   0.19  |   0.25  |
- |       CONFIRMED   |    0.75   |   0.87  |   0.81  |
- |  FALSE POSITIVE   |    0.39   |   0.19  |   0.26  |
- | NOT DISPOSITIONED |    0.70   |   0.68  |   0.69  |
+
+                  precision    recall  f1-score 
+
+        CANDIDATE       0.35      0.19      0.25
+        CONFIRMED       0.75      0.87      0.81
+      FALSE POSITIVE    0.39      0.19      0.26 
+     NOT DISPOSITIONED  0.70      0.68      0.69
 
 
 ## 📊 Visualisation
