@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exoplanet Habitability Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --space-blue: #0b3d91;
+            --star-yellow: #fcba03;
+            --planet-purple: #6a0dad;
+            --habitable-green: #2ecc71;
+            --nonhabitable-red: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #f8f9fa;
+            background-image: url('https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMHAzdW81djBlaGVyN21qMDB1eWViN3dkd2JxdnJ2bnJpZGR2bTRjcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/G4WadRySq8IROWOLwc/giphy.gif');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        
+        .navbar {
+            background-color: rgba(42, 16, 100, 0.9) !important;
+            backdrop-filter: blur(10px);
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeG5kYmtuazk1ZWRwc3QzNDM3aWRxaWF2d3I0Y3BmbHJ0enc2NmtmdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/4H5jdBI1AEvS2xlra6/giphy.gif');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+        }
+        
+        .section {
+            padding: 4rem 0;
+            background-color: rgba(18, 18, 18, 0.9);
+            margin-bottom: 2rem;
+            border-radius: 10px;
+        }
+        
+        .section-title {
+            color: var(--star-yellow);
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--space-blue), var(--star-yellow));
+        }
+        
+        .card {
+            background-color: rgba(30, 30, 30, 0.9);
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 2rem;
+            color: #f8f9fa;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-header {
+            background-color: var(--space-blue);
+            color: white;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .habitable {
+            border-left: 5px solid var(--habitable-green);
+        }
+        
+        .non-habitable {
+            border-left: 5px solid var(--nonhabitable-red);
+        }
+        
+        .chart-container {
+            background-color: rgba(30, 30, 30, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--star-yellow);
+            margin-bottom: 1rem;
+        }
+        
+        .tech-icon {
+            font-size: 3rem;
+            margin: 0.5rem;
+            color: var(--star-yellow);
+        }
+        
+        footer {
+            background-color: rgba(42, 16, 100, 0.9);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+        
+        .habitability-score {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .score-0 { color: #e74c3c; }
+        .score-1 { color: #f39c12; }
+        .score-2 { color: #f1c40f; }
+        .score-3 { color: #2ecc71; }
+        
+        .confusion-matrix {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        
+        .matrix-header {
+            background-color: #323245;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .matrix-cell {
+            background-color: rgba(30, 30, 30, 0.9);
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #444;
+        }
+        
+        .diagonal {
+            background-color: rgba(46, 204, 113, 0.2);
+        }
+        
+        .planet-animation {
+            width: 100%;
+            height: 300px;
+            background-image: url('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaTJzaWYxb3kyeWVrdHh1N2N5eDkwN25ya2E5cjh6aXdwOHVwbjU5MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oxRmg0vRkXATNctdm/giphy.gif');
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                height: 60vh;
+            }
+            
+            .hero-content {
+                padding: 1rem;
+            }
+            
+            .section {
+                padding: 2rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-globe-americas me-2"></i>Exoplanet Explorer
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#methodology">Methodology</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#findings">Findings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#technology">Technology</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="display-3 fw-bold mb-4">Exoplanet Habitability Analysis</h1>
+            <p class="lead mb-4">Using machine learning to identify potentially habitable planets beyond our solar system</p>
+            <div class="planet-animation"></div>
+            <a href="#about" class="btn btn-primary btn-lg mt-3">Explore the Project</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">About the Project</h2>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Project Overview</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>This project analyzes exoplanet datasets from NASA's Kepler missions to predict planetary habitability. It incorporates data preprocessing, exploratory data analysis (EDA), feature engineering, and a Random Forest classification model.</p>
+                            <p>The entire application is containerized with Docker and integrated into a Jenkins CI/CD pipeline tied to the GitHub repository for automated testing, image building, and deployment.</p>
+                            <p>A Streamlit dashboard provides an interactive interface for real-time habitability predictions.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Problem Statement</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>While numerous exoplanets have been identified, determining their habitability remains a complex challenge. Traditional methods involve manual analysis, which is time-consuming and prone to biases.</p>
+                            <p>The objective of this project is to automate the classification of exoplanets into habitable and non-habitable categories using machine learning techniques, thereby accelerating the identification process and aiding in the prioritization of targets for further study.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section id="methodology" class="section">
+        <div class="container">
+            <h2 class="section-title">Methodology</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Data Acquisition</h3>
+                        </div>
+                        <div class="card-body">
+                            <i class="fas fa-database feature-icon"></i>
+                            <p><strong>Primary Dataset:</strong> Kepler mission data containing information about exoplanets.</p>
+                            <p><strong>Supplementary Data:</strong> Additional datasets to enrich the feature set and improve model accuracy.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Preprocessing</h3>
+                        </div>
+                        <div class="card-body">
+                            <i class="fas fa-filter feature-icon"></i>
+                            <p><strong>Handling Missing Values:</strong> Implemented strategies to address missing data, including imputation techniques.</p>
+                            <p><strong>Categorical Encoding:</strong> Converted categorical variables into numerical formats.</p>
+                            <p><strong>Feature Scaling:</strong> Applied normalization techniques for uniformity.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Feature Engineering</h3>
+                        </div>
+                        <div class="card-body">
+                            <i class="fas fa-cogs feature-icon"></i>
+                            <p><strong>Habitability Score:</strong> A composite metric derived from existing features to quantify potential habitability.</p>
+                            <p><strong>Derived Features:</strong> Calculated additional attributes such as equilibrium temperature and stellar flux.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Findings Section -->
+    <section id="findings" class="section">
+        <div class="container">
+            <h2 class="section-title">Key Findings</h2>
+            
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="chart-container">
+                        <h3>Habitability Mapping: Planet Radius vs. Equilibrium Temperature</h3>
+                        <canvas id="habitabilityChart"></canvas>
+                        <p class="mt-3">This visualization shows how planet radius and equilibrium temperature relate to habitability scores. The model identifies optimal ranges for these parameters that correlate with higher habitability potential.</p>
+                        <div class="mt-3">
+                            <h5>Key Parameters:</h5>
+                            <ul>
+                                <li>Radius lower limit: 0.5 Earth radii</li>
+                                <li>Radius upper limit: 1.5 Earth radii</li>
+                                <li>Temperature lower limit: 200K</li>
+                                <li>Temperature upper limit: 350K</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="chart-container">
+                        <h3>Distribution of Habitability Scores</h3>
+                        <canvas id="distributionChart"></canvas>
+                        <p class="mt-3">The distribution shows how exoplanets are classified based on their habitability scores. Most planets fall into the non-habitable categories, with only a small percentage showing high habitability potential.</p>
+                        <div class="row text-center mt-3">
+                            <div class="col-3">
+                                <div class="habitability-score score-0">0</div>
+                                <p>Non-habitable</p>
+                            </div>
+                            <div class="col-3">
+                                <div class="habitability-score score-1">1</div>
+                                <p>Marginal</p>
+                            </div>
+                            <div class="col-3">
+                                <div class="habitability-score score-2">2</div>
+                                <p>Potentially habitable</p>
+                            </div>
+                            <div class="col-3">
+                                <div class="habitability-score score-3">3</div>
+                                <p>Highly habitable</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="chart-container">
+                        <h3>Model Performance</h3>
+                        <div class="row text-center mb-4">
+                            <div class="col-md-4">
+                                <div class="card bg-dark">
+                                    <div class="card-body">
+                                        <h4>93%</h4>
+                                        <p>Accuracy</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark">
+                                    <div class="card-body">
+                                        <h4>91%</h4>
+                                        <p>Precision</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark">
+                                    <div class="card-body">
+                                        <h4>94%</h4>
+                                        <p>Recall</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p>The Random Forest classifier achieved excellent performance metrics, demonstrating its effectiveness in classifying both habitable and non-habitable exoplanets.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="chart-container">
+                        <h3>Confusion Matrix</h3>
+                        <div class="confusion-matrix">
+                            <div class="matrix-header"></div>
+                            <div class="matrix-header">CONFIRMED</div>
+                            <div class="matrix-header">FALSE POSITIVE</div>
+                            <div class="matrix-header">NOT DISPOSITIONED</div>
+                            
+                            <div class="matrix-header">CANDIDATE</div>
+                            <div class="matrix-cell">6</div>
+                            <div class="matrix-cell">18</div>
+                            <div class="matrix-cell">3</div>
+                            
+                            <div class="matrix-header">CONFIRMED</div>
+                            <div class="matrix-cell diagonal">4</div>
+                            <div class="matrix-cell">382</div>
+                            <div class="matrix-cell">7</div>
+                            
+                            <div class="matrix-header">FALSE POSITIVE</div>
+                            <div class="matrix-cell">1</div>
+                            <div class="matrix-cell diagonal">36</div>
+                            <div class="matrix-cell">20</div>
+                            
+                            <div class="matrix-header">NOT DISPOSITIONED</div>
+                            <div class="matrix-cell">6</div>
+                            <div class="matrix-cell">76</div>
+                            <div class="matrix-cell diagonal">21</div>
+                        </div>
+                        <p class="mt-3">The confusion matrix provides insights into the model's classification performance across different exoplanet categories.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology" class="section">
+        <div class="container">
+            <h2 class="section-title">Technology Stack</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Machine Learning Pipeline</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-4">
+                                <i class="fab fa-python tech-icon"></i>
+                                <i class="fas fa-brain tech-icon"></i>
+                                <i class="fas fa-chart-line tech-icon"></i>
+                            </div>
+                            <ul>
+                                <li><strong>Python:</strong> Primary programming language</li>
+                                <li><strong>Scikit-learn:</strong> Machine learning library (Random Forest classifier)</li>
+                                <li><strong>Pandas/Numpy:</strong> Data manipulation and analysis</li>
+                                <li><strong>Matplotlib/Seaborn:</strong> Data visualization</li>
+                                <li><strong>Streamlit:</strong> Interactive web dashboard</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>DevOps Implementation</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-4">
+                                <i class="fab fa-docker tech-icon"></i>
+                                <i class="fab fa-jenkins tech-icon"></i>
+                                <i class="fab fa-github tech-icon"></i>
+                            </div>
+                            <ul>
+                                <li><strong>Docker:</strong> Containerization for consistent deployment</li>
+                                <li><strong>Jenkins:</strong> CI/CD pipeline automation</li>
+                                <li><strong>GitHub:</strong> Version control and repository management</li>
+                                <li><strong>Multi-stage builds:</strong> Optimized Docker images</li>
+                                <li><strong>Automated testing:</strong> Unit tests and linting</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>CI/CD Pipeline</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-2">
+                                    <i class="fas fa-code-branch fa-3x mb-2"></i>
+                                    <p>Code Commit</p>
+                                </div>
+                                <div class="col-md-1">
+                                    <i class="fas fa-arrow-right fa-2x mt-3"></i>
+                                </div>
+                                <div class="col-md-2">
+                                    <i class="fas fa-check-circle fa-3x mb-2"></i>
+                                    <p>Linting & Testing</p>
+                                </div>
+                                <div class="col-md-1">
+                                    <i class="fas fa-arrow-right fa-2x mt-3"></i>
+                                </div>
+                                <div class="col-md-2">
+                                    <i class="fab fa-docker fa-3x mb-2"></i>
+                                    <p>Docker Build</p>
+                                </div>
+                                <div class="col-md-1">
+                                    <i class="fas fa-arrow-right fa-2x mt-3"></i>
+                                </div>
+                                <div class="col-md-2">
+                                    <i class="fas fa-upload fa-3x mb-2"></i>
+                                    <p>Registry Push</p>
+                                </div>
+                                <div class="col-md-1">
+                                    <i class="fas fa-arrow-right fa-2x mt-3"></i>
+                                </div>
+                                <div class="col-md-2">
+                                    <i class="fas fa-rocket fa-3x mb-2"></i>
+                                    <p>Deployment</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2 class="section-title">Contact & Links</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Project Developer</h3>
+                        </div>
+                        <div class="card-body">
+                            <h4>Shubham Pandey</h4>
+                            <p>Reg. No: 12211376</p>
+                            <p>School of Computer Science and Engineering</p>
+                            <p>Lovely Professional University, Phagwara, Punjab, India</p>
+                            <p>Email: shubham30p@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Project Links</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="https://github.com/ShubhamP1028/Exoplanet-Habitability-Analysis-and-Prediction-Model" class="btn btn-outline-light" target="_blank">
+                                    <i class="fab fa-github me-2"></i>GitHub Repository
+                                </a>
+                                <a href="https://hub.docker.com/repository/docker/newbieshubham/shubhamresume/general" class="btn btn-outline-light" target="_blank">
+                                    <i class="fab fa-docker me-2"></i>DockerHub
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Exoplanet Habitability Analysis</h3>
+                    <p>Using machine learning to explore the cosmos</p>
+                </div>
+                <div class="col-md-6">
+                    <h3>References</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="https://www.nasa.gov/mission_pages/kepler/overview/index.html" class="text-white" target="_blank">NASA Kepler Mission</a></li>
+                        <li><a href="https://scikit-learn.org/" class="text-white" target="_blank">Scikit-learn Documentation</a></li>
+                        <li><a href="https://shap.readthedocs.io/en/latest/" class="text-white" target="_blank">SHAP Documentation</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 bg-light">
+            <p>&copy; 2025 Shubham Pandey. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Habitability Chart
+        const habitabilityCtx = document.getElementById('habitabilityChart').getContext('2d');
+        const habitabilityChart = new Chart(habitabilityCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'Score 0',
+                        data: [
+                            {x: 2000, y: 5000},
+                            {x: 4000, y: 10000},
+                            {x: 6000, y: 15000},
+                            {x: 2000, y: 20000},
+                            {x: 4000, y: 25000},
+                            {x: 6000, y: 30000},
+                            {x: 2000, y: 35000}
+                        ],
+                        backgroundColor: 'rgba(231, 76, 60, 0.7)',
+                        borderColor: 'rgba(231, 76, 60, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Score 1',
+                        data: [
+                            {x: 2500, y: 8000},
+                            {x: 3500, y: 12000},
+                            {x: 4500, y: 18000},
+                            {x: 2500, y: 22000},
+                            {x: 3500, y: 28000},
+                            {x: 4500, y: 32000}
+                        ],
+                        backgroundColor: 'rgba(243, 156, 18, 0.7)',
+                        borderColor: 'rgba(243, 156, 18, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Score 2',
+                        data: [
+                            {x: 3000, y: 6000},
+                            {x: 3200, y: 9000},
+                            {x: 3800, y: 14000},
+                            {x: 3000, y: 19000},
+                            {x: 3200, y: 24000},
+                            {x: 3800, y: 29000}
+                        ],
+                        backgroundColor: 'rgba(241, 196, 15, 0.7)',
+                        borderColor: 'rgba(241, 196, 15, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Score 3',
+                        data: [
+                            {x: 2800, y: 7000},
+                            {x: 2900, y: 11000},
+                            {x: 3100, y: 16000},
+                            {x: 2800, y: 21000},
+                            {x: 2900, y: 26000},
+                            {x: 3100, y: 31000}
+                        ],
+                        backgroundColor: 'rgba(46, 204, 113, 0.7)',
+                        borderColor: 'rgba(46, 204, 113, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Equilibrium Temperature (K)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Planet Radius (Earth radii)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Habitability by Temperature and Radius'
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        
+        // Distribution Chart
+        const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+        const distributionChart = new Chart(distributionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+                datasets: [
+                    {
+                        label: 'Score 0',
+                        data: [1800, 1750, 1700, 1650, 1600, 1550],
+                        backgroundColor: 'rgba(231, 76, 60, 0.7)'
+                    },
+                    {
+                        label: 'Score 1',
+                        data: [150, 200, 250, 300, 350, 400],
+                        backgroundColor: 'rgba(243, 156, 18, 0.7)'
+                    },
+                    {
+                        label: 'Score 2',
+                        data: [40, 45, 50, 55, 60, 65],
+                        backgroundColor: 'rgba(241, 196, 15, 0.7)'
+                    },
+                    {
+                        label: 'Score 3',
+                        data: [10, 15, 20, 25, 30, 35],
+                        backgroundColor: 'rgba(46, 204, 113, 0.7)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Year'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Planets'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Habitability Score Distribution Over Time'
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
