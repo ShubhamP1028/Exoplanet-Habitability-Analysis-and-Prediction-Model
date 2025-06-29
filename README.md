@@ -3,6 +3,7 @@
 An end-to-end data science project built using Kepler exoplanet data. This project includes data preprocessing, feature engineering, habitability scoring, exploratory analysis, classification modeling, and a fully interactive Streamlit dashboard.
 
 ---
+![image](https://github.com/user-attachments/assets/38691f71-430f-4b77-8357-45a7dc7bb72b)
 
 ## 📌 Project Overview
 
