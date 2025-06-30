@@ -129,6 +129,10 @@ Scikit-learn (modeling + PCA)
  
 ---
 
+## DockerHub Upload
+
+Link : https://hub.docker.com/repository/docker/newbieshubham/shubham-resume/tags/Exoplanet/sha256:ee4eb22206cdbd47dd5d7e0259cf203e1d6359a393863adfaebd05ca64cae75b
+
 ## 📌 Future Enhancements
 Hyperparameter tuning for model
 
