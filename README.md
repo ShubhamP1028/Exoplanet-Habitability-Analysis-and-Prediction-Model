@@ -1,5 +1,7 @@
 # 🪐 Exoplanet Habitability Analysis & KOI Classification
 
+### https://exoplanet-habitability-analysis.vercel.app/
+
 An end-to-end data science project built using Kepler exoplanet data. This project includes data preprocessing, feature engineering, habitability scoring, exploratory analysis, classification modeling, and a fully interactive Streamlit dashboard.
 
 ---
